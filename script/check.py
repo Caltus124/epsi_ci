@@ -22,19 +22,30 @@ def git():
     subprocess.run(["git", "checkout", NUM_COMMIT])
 
 def build_test():
-    script_path = "/tmp/github/test/test.py"
-    result = subprocess.run(["pytest", script_path], capture_output=True, text=True, check=True)
+    try:
+        script_path = "/tmp/github/test/test.py"
+        try:
+            result = subprocess.run(["pytest", script_path], capture_output=True, text=True, check=True)
+        except:
+            print("Les tests ne sont pas bon !")
+            build_test_fail()
+        # Affichez la sortie standard du script
+        print(result.stdout)
 
-    # Affichez la sortie standard du script
-    print(result.stdout)
-
-    if result.returncode == 0:
-        print("les tests sont bon pour le master !")
-    else:
-        print("Les tests ne sont pas bon !")
-        build_test_fail()
+        if result.returncode == 0:
+            print("les tests sont bon pour le master !")
 
 
+    except subprocess.CalledProcessError as e:
+        # En cas d'erreur lors de l'exécution du script
+        print(f"Erreur lors de l'exécution du script : {e}")
+    except FileNotFoundError as e:
+        # En cas de fichier introuvable
+        print(f"Fichier introuvable : {e}")
+    except Exception as e:
+        # En cas d'autres erreurs
+        print(f"Erreur inattendue : {e}")
+    
 def build_test_good():
     pass
     # subprocess.run(["git", "merge", "dev", "--ff-only"], check=True)
