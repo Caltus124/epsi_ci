@@ -20,4 +20,18 @@ def git():
 
     subprocess.run(["git", "checkout", NUM_COMMIT])
 
+def build_test():
+    script_path = "/tmp/github/test/test.py"
+    result = subprocess.run(["pytest", script_path], capture_output=True, text=True, check=True)
+
+    # Affichez la sortie standard du script
+    print(result.stdout)
+
+    if result.returncode == 0:
+        print("les tests sont bon pour le master !")
+    else:
+        print("erreur")
+
+
 git()
+build_test()
