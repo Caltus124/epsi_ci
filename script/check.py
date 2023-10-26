@@ -6,15 +6,19 @@ import os
 # main
 #  e4910b6
 
+NUM_COMMIT = ""
+PATH_CLONE = ""
+
 def git():
+    global NUM_COMMIT
+    global PATH_CLONE
     os.system('clear')
     NUM_URL = input("Sélctionner une URL de repot : ")
     NUM_COMMIT = input("Selectionner le numéro du commit : ")
     PATH_CLONE = "/tmp/github/"
     
     os.system('clear')
-    
-    subprocess.run(["rm", "-rf", PATH_CLONE])
+
     subprocess.run(["git", "clone", NUM_URL, PATH_CLONE])
     
     print("\nClone succesful!\n")
@@ -34,6 +38,7 @@ def build_test():
 
         if result.returncode == 0:
             print("les tests sont bon pour le master !")
+            build_test_good()
 
 
     except subprocess.CalledProcessError as e:
@@ -47,8 +52,11 @@ def build_test():
         print(f"Erreur inattendue : {e}")
     
 def build_test_good():
-    pass
-    # subprocess.run(["git", "merge", "dev", "--ff-only"], check=True)
+    subprocess.run(["git", "checkout", "main"], check=True)
+    subprocess.run(["git", "pull"], check=True)
+    subprocess.run(["git", "merge", NUM_COMMIT, "--ff-only"], check=True)
+    print("\nLe code dev est bien merge dans main !")
+    subprocess.run(["rm", "-rf", PATH_CLONE])
 
 def build_test_fail():
     try:
@@ -63,6 +71,7 @@ def build_test_fail():
         subprocess.run(["git", "push", "origin", branch_name], check=True)
 
         print(f"Branche '{branch_name}' créée et poussée avec succès sur GitHub.")
+        subprocess.run(["rm", "-rf", PATH_CLONE])
 
     except subprocess.CalledProcessError as e:
         print(f"Erreur Git : {e}")
