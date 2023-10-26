@@ -5,3 +5,5 @@ class ConvertisseurNombresRomains:
             return "I"
         elif nombre_arabe == 2:
             return "II"
+        elif nombre_arabe == 3:
+            return "III"
