@@ -1,3 +1,4 @@
+from datetime import datetime
 import subprocess
 import os
 
@@ -30,7 +31,32 @@ def build_test():
     if result.returncode == 0:
         print("les tests sont bon pour le master !")
     else:
-        print("erreur")
+        print("Les tests ne sont pas bon !")
+        build_test_fail()
+
+
+def build_test_good():
+    pass
+    # subprocess.run(["git", "merge", "dev", "--ff-only"], check=True)
+
+def build_test_fail():
+    try:
+        # Générez un nom de branche basé sur la date et l'heure actuelles
+        now = datetime.now()
+        branch_name = f"failure/{now.strftime('%Y-%m-%d_%H-%M-%S')}"
+
+        # Créez la nouvelle branche localement
+        subprocess.run(["git", "checkout", "-b", branch_name], check=True)
+
+        # Poussez la nouvelle branche vers le référentiel distant (GitHub)
+        subprocess.run(["git", "push", "origin", branch_name], check=True)
+
+        print(f"Branche '{branch_name}' créée et poussée avec succès sur GitHub.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Erreur Git : {e}")
+    except Exception as e:
+        print(f"Erreur inattendue : {e}")
 
 
 git()
